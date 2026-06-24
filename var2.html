@@ -1,0 +1,2883 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>СоюзПоставка — медицинские объекты</title>
+  <style>
+    :root {
+      --bg: #f4f1ea;
+      --bg-soft: #ebe7dd;
+      --paper: #fffaf1;
+      --paper-2: rgba(255, 250, 241, 0.74);
+      --ink: #102139;
+      --ink-2: #263b59;
+      --muted: #657188;
+      --navy: #17345a;
+      --navy-dark: #0f213a;
+      --navy-soft: #223f65;
+      --teal: #55c9c3;
+      --teal-soft: rgba(85, 201, 195, 0.18);
+      --gold: #c8a66a;
+      --gold-soft: rgba(200, 166, 106, 0.18);
+      --line: rgba(16, 33, 57, 0.14);
+      --shadow: 0 26px 70px rgba(16, 33, 57, 0.12);
+      --shadow-soft: 0 18px 44px rgba(16, 33, 57, 0.08);
+      --radius-xl: 34px;
+      --radius-lg: 26px;
+      --radius-md: 18px;
+      --ease: cubic-bezier(.19, 1, .22, 1);
+    }
+
+    * { box-sizing: border-box; }
+
+    html {
+      scroll-behavior: smooth;
+      background: var(--bg);
+    }
+
+    body {
+      margin: 0;
+      font-family: "SegoeUI-Regular", "Segoe UI", Arial, sans-serif;
+      font-size: 18px;
+      line-height: 1.5;
+      font-weight: 400;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 8% 6%, rgba(85, 201, 195, .18), transparent 30vw),
+        radial-gradient(circle at 92% 2%, rgba(200, 166, 106, .18), transparent 32vw),
+        linear-gradient(180deg, #f4f1ea 0%, #f7f3ea 50%, #eee9dd 100%);
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: -2;
+      pointer-events: none;
+      opacity: .28;
+      background-image:
+        linear-gradient(rgba(16, 33, 57, .05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(16, 33, 57, .05) 1px, transparent 1px);
+      background-size: 48px 48px;
+      mask-image: linear-gradient(180deg, black 0%, transparent 85%);
+    }
+
+    body::after {
+      content: "";
+      position: fixed;
+      width: 520px;
+      height: 520px;
+      left: var(--mx, 72%);
+      top: var(--my, 20%);
+      translate: -50% -50%;
+      z-index: -1;
+      pointer-events: none;
+      background: radial-gradient(circle, rgba(85, 201, 195, .12), transparent 62%);
+      filter: blur(24px);
+      transition: left .45s ease, top .45s ease;
+    }
+
+    a { color: inherit; text-decoration: none; }
+    p, h1, h2, h3, h4 { margin: 0; }
+    button, input, textarea { font: inherit; }
+
+    .page-shell {
+      width: min(100% - 64px, 1600px);
+      margin: 0 auto;
+    }
+
+    .section {
+      padding: 112px 0;
+      position: relative;
+    }
+
+    .section.compact { padding: 76px 0; }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      color: var(--navy);
+      font-size: 13px;
+      line-height: 1;
+      letter-spacing: .16em;
+      text-transform: uppercase;
+      font-weight: 700;
+    }
+
+    .eyebrow::before {
+      content: "";
+      width: 36px;
+      height: 1px;
+      background: var(--gold);
+    }
+
+    .kicker {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      padding: 10px 14px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      color: var(--ink-2);
+      background: rgba(255, 250, 241, .68);
+      backdrop-filter: blur(16px);
+      font-size: 14px;
+      line-height: 1;
+      font-weight: 700;
+    }
+
+    .kicker .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--teal);
+      box-shadow: 0 0 0 7px rgba(85, 201, 195, .14);
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 52px;
+      padding: 0 24px;
+      border: 0;
+      border-radius: 999px;
+      background: var(--navy-dark);
+      color: var(--paper);
+      font-size: 16px;
+      line-height: 1;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform .25s var(--ease), box-shadow .25s var(--ease), background .25s var(--ease);
+      box-shadow: 0 18px 42px rgba(16, 33, 57, .20);
+    }
+
+    .btn:hover {
+      transform: translateY(-3px);
+      background: #0a1729;
+      box-shadow: 0 24px 54px rgba(16, 33, 57, .27);
+    }
+
+    .btn.secondary {
+      background: rgba(255, 250, 241, .78);
+      color: var(--ink);
+      border: 1px solid var(--line);
+      box-shadow: none;
+    }
+
+    .btn.secondary:hover {
+      background: var(--paper);
+      box-shadow: 0 16px 36px rgba(16, 33, 57, .10);
+    }
+
+    .section-head {
+      display: grid;
+      grid-template-columns: 620px minmax(0, 1fr);
+      gap: 96px;
+      align-items: end;
+      margin-bottom: 38px;
+    }
+
+    .section-title,
+    .hero h1,
+    .process-sticky h2,
+    .cta-copy h2 {
+      font-size: 48px;
+      line-height: 1.02;
+      letter-spacing: -.05em;
+      font-weight: 700;
+      color: var(--ink);
+    }
+
+    .section-title { margin-top: 14px; max-width: 760px; }
+
+    .section-subtitle {
+      color: var(--ink-2);
+      font-size: 18px;
+      line-height: 1.55;
+      max-width: 760px;
+    }
+
+    .hero {
+      min-height: 720px;
+      padding: 72px 0 82px;
+      display: grid;
+      align-items: center;
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 720px) minmax(560px, 1fr);
+      gap: 96px;
+      align-items: center;
+    }
+
+    .hero-copy { position: relative; z-index: 2; }
+
+    .hero h1 {
+      margin: 26px 0 26px;
+      max-width: 760px;
+    }
+
+    .hero h1 .soft { color: #355477; }
+
+    .lead {
+      color: var(--ink-2);
+      font-size: 18px;
+      line-height: 1.62;
+      max-width: 760px;
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: center;
+      margin-top: 32px;
+    }
+
+    .helper {
+      margin-top: 14px;
+      max-width: 520px;
+      color: var(--muted);
+      font-size: 16px;
+      line-height: 1.55;
+    }
+
+    .hero-visual {
+      min-height: 560px;
+      position: relative;
+      isolation: isolate;
+    }
+
+    .orb {
+      position: absolute;
+      border-radius: 999px;
+      z-index: -1;
+    }
+
+    .orb.cyan {
+      width: 245px;
+      height: 245px;
+      right: 8px;
+      top: 10px;
+      background: radial-gradient(circle at 30% 30%, rgba(85, 201, 195, .48), rgba(85, 201, 195, .05) 66%, transparent 72%);
+    }
+
+    .orb.gold {
+      width: 300px;
+      height: 300px;
+      left: 10px;
+      bottom: 70px;
+      background: radial-gradient(circle at 30% 30%, rgba(200, 166, 106, .44), rgba(200, 166, 106, .05) 66%, transparent 72%);
+    }
+
+    .visual-card {
+      position: absolute;
+      border: 1px solid var(--line);
+      background: rgba(255, 250, 241, .72);
+      backdrop-filter: blur(18px);
+      border-radius: 28px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      transform: translateZ(0);
+    }
+
+    .visual-card.main {
+      inset: 42px 0 auto 84px;
+      width: min(560px, calc(100% - 80px));
+      min-height: 470px;
+      color: var(--paper);
+      background:
+        linear-gradient(135deg, rgba(20, 43, 74, .98), rgba(28, 56, 94, .94)),
+        radial-gradient(circle at 20% 20%, rgba(85, 201, 195, .5), transparent 40%);
+    }
+
+    .visual-card.main::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      opacity: .25;
+      background-image:
+        linear-gradient(rgba(255,255,255,.16) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.16) 1px, transparent 1px);
+      background-size: 44px 44px;
+    }
+
+    .room-plan {
+      position: absolute;
+      inset: 34px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      grid-template-rows: 1fr .9fr;
+      gap: 14px;
+    }
+
+    .room {
+      position: relative;
+      border: 1px solid rgba(255, 250, 241, .25);
+      border-radius: 22px;
+      background: rgba(255, 255, 255, .06);
+      overflow: hidden;
+    }
+
+    .room::before,
+    .room::after {
+      content: "";
+      position: absolute;
+      border-radius: 10px;
+      background: rgba(255, 250, 241, .22);
+    }
+
+    .room.r1::before { width: 52%; height: 18%; left: 16%; top: 17%; }
+    .room.r1::after { width: 24%; height: 38%; right: 15%; bottom: 14%; background: rgba(85, 201, 195, .42); }
+    .room.r2::before { width: 20%; height: 64%; left: 15%; top: 18%; background: rgba(200, 166, 106, .42); }
+    .room.r2::after { width: 48%; height: 18%; right: 12%; bottom: 16%; }
+    .room.r3 { grid-column: 1 / -1; }
+    .room.r3::before { width: 24%; height: 45%; left: 13%; top: 24%; }
+    .room.r3::after { width: 44%; height: 20%; right: 12%; top: 24%; background: rgba(85, 201, 195, .36); }
+
+    .visual-label {
+      position: absolute;
+      left: 32px;
+      right: 32px;
+      bottom: 26px;
+      z-index: 3;
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 20px;
+    }
+
+    .visual-label strong {
+      font-size: 20px;
+      line-height: 1.08;
+      font-weight: 700;
+    }
+
+    .visual-label span {
+      color: rgba(255, 250, 241, .68);
+      font-size: 13px;
+    }
+
+    .mini-card {
+      width: 280px;
+      min-height: 146px;
+      padding: 18px;
+    }
+
+    .mini-card h3 {
+      margin: 0 0 10px;
+      font-size: 17px;
+      line-height: 1.12;
+      font-weight: 700;
+    }
+
+    .mini-card p {
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.45;
+    }
+
+    .mini-card.one { right: 0; top: 0; }
+    .mini-card.two { left: 0; top: 360px; }
+    .mini-card.three { right: 48px; bottom: 4px; width: 300px; }
+
+    .status-row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 8px;
+      align-items: center;
+      padding-top: 14px;
+      margin-top: 14px;
+      border-top: 1px solid var(--line);
+    }
+
+    .status-row small { color: var(--muted); font-size: 12px; }
+    .status-row b { color: var(--navy); font-size: 12px; }
+
+    .stats {
+      padding: 32px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-xl);
+      background: rgba(255, 250, 241, .62);
+      backdrop-filter: blur(16px);
+      box-shadow: var(--shadow-soft);
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0;
+      overflow: hidden;
+      border-top: 1px solid var(--line);
+      border-left: 1px solid var(--line);
+      border-radius: 22px;
+    }
+
+    .stat {
+      min-height: 190px;
+      padding: 24px;
+      background: rgba(255, 250, 241, .50);
+      border-right: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: transform .25s var(--ease), background .25s var(--ease);
+    }
+
+    .stat:hover {
+      transform: translateY(-4px);
+      background: rgba(255, 250, 241, .88);
+    }
+
+    .stat b {
+      font-size: 58px;
+      line-height: .9;
+      letter-spacing: -.06em;
+      font-weight: 700;
+      color: var(--navy);
+    }
+
+    .stat span {
+      color: var(--muted);
+      font-size: 16px;
+      line-height: 1.42;
+    }
+
+    .audience-layout {
+      display: grid;
+      grid-template-columns: 440px minmax(0, 1fr);
+      gap: 22px;
+      align-items: start;
+    }
+
+    .audience-tabs {
+      display: grid;
+      gap: 10px;
+      position: sticky;
+      top: 28px;
+    }
+
+    .audience-tab {
+      width: 100%;
+      text-align: left;
+      border: 1px solid var(--line);
+      background: rgba(255, 250, 241, .58);
+      border-radius: 18px;
+      padding: 18px;
+      color: var(--ink);
+      cursor: pointer;
+      transition: background .25s var(--ease), color .25s var(--ease), transform .25s var(--ease), box-shadow .25s var(--ease);
+    }
+
+    .audience-tab:hover { transform: translateX(4px); }
+
+    .audience-tab.active {
+      background: var(--navy);
+      color: var(--paper);
+      box-shadow: 0 18px 45px rgba(20, 43, 74, .18);
+    }
+
+    .audience-tab small {
+      display: block;
+      margin-bottom: 6px;
+      color: var(--gold);
+      font-size: 12px;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      font-weight: 700;
+    }
+
+    .audience-tab.active small { color: #e2c489; }
+    .audience-tab strong { font-size: 18px; line-height: 1.2; font-weight: 700; }
+
+    .audience-panel {
+      display: none;
+      min-height: 520px;
+      padding: 32px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-xl);
+      background: rgba(255, 250, 241, .72);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .audience-panel.active {
+      display: grid;
+      animation: fadeUp .35s var(--ease) both;
+    }
+
+    .audience-panel::after {
+      content: "";
+      position: absolute;
+      width: 280px;
+      height: 280px;
+      right: -120px;
+      top: -110px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(85, 201, 195, .20), transparent 68%);
+    }
+
+    .panel-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+      position: relative;
+      z-index: 2;
+    }
+
+    .panel-title {
+      grid-column: 1 / -1;
+      font-size: 40px;
+      line-height: 1.05;
+      letter-spacing: -.05em;
+      font-weight: 700;
+      max-width: 760px;
+    }
+
+    .panel-card {
+      padding: 22px;
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      background: rgba(244, 241, 234, .78);
+    }
+
+    .panel-card.wide { grid-column: 1 / -1; }
+
+    .panel-card h4 {
+      margin-bottom: 10px;
+      color: var(--navy);
+      font-size: 13px;
+      line-height: 1;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      font-weight: 700;
+    }
+
+    .panel-card p {
+      color: var(--ink-2);
+      font-size: 18px;
+      line-height: 1.52;
+    }
+
+    .zones-layout {
+      display: grid;
+      grid-template-columns: 440px minmax(0, 1fr);
+      gap: 24px;
+      align-items: start;
+    }
+
+    .zones-intro {
+      position: sticky;
+      top: 28px;
+      min-height: 330px;
+      padding: 32px;
+      border-radius: var(--radius-xl);
+      color: var(--paper);
+      background:
+        radial-gradient(circle at 100% 100%, rgba(85, 201, 195, .36), transparent 42%),
+        linear-gradient(145deg, var(--navy-dark), var(--navy));
+      box-shadow: var(--shadow-soft);
+    }
+
+    .zones-intro .eyebrow { color: rgba(255, 250, 241, .88); }
+    .zones-intro h2 {
+      margin-top: 26px;
+      font-size: 40px;
+      line-height: 1.06;
+      letter-spacing: -.05em;
+      font-weight: 700;
+    }
+    .zones-intro p {
+      margin-top: 26px;
+      color: rgba(255, 250, 241, .76);
+      font-size: 18px;
+      line-height: 1.55;
+    }
+
+    .zones {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .zone-card {
+      min-height: 198px;
+      border: 1px solid var(--line);
+      border-radius: 28px;
+      padding: 24px;
+      background: rgba(255, 250, 241, .62);
+      position: relative;
+      overflow: hidden;
+      transition: transform .25s var(--ease), box-shadow .25s var(--ease), background .25s var(--ease);
+    }
+
+    .zone-card.wide { grid-column: 1 / -1; min-height: 180px; }
+
+    .zone-card:hover {
+      transform: translateY(-5px);
+      background: rgba(255, 250, 241, .90);
+      box-shadow: 0 22px 52px rgba(16, 33, 57, .10);
+    }
+
+    .zone-card::before {
+      content: attr(data-index);
+      position: absolute;
+      right: 22px;
+      bottom: 12px;
+      color: rgba(16, 33, 57, .11);
+      font-size: 70px;
+      line-height: 1;
+      letter-spacing: -.08em;
+      font-weight: 700;
+    }
+
+    .zone-card h3 {
+      margin: 0 0 16px;
+      max-width: 430px;
+      color: var(--ink);
+      font-size: 24px;
+      line-height: 1.08;
+      letter-spacing: -.04em;
+      font-weight: 700;
+    }
+
+    .zone-card p {
+      max-width: 600px;
+      color: var(--muted);
+      font-size: 18px;
+      line-height: 1.52;
+    }
+
+    .zone-callout {
+      grid-column: 1 / -1;
+      display: grid;
+      grid-template-columns: minmax(0, .8fr) minmax(0, 1fr) auto;
+      gap: 28px;
+      align-items: center;
+      margin-top: 2px;
+      padding: 24px;
+      border-radius: 28px;
+      color: var(--paper);
+      background:
+        radial-gradient(circle at 92% 50%, rgba(85, 201, 195, .24), transparent 34%),
+        linear-gradient(135deg, var(--navy), var(--navy-dark));
+    }
+
+    .zone-callout strong {
+      font-size: 24px;
+      line-height: 1.08;
+      letter-spacing: -.04em;
+      font-weight: 700;
+    }
+
+    .zone-callout p { color: rgba(255, 250, 241, .72); font-size: 18px; }
+
+    .process-wrap {
+      display: grid;
+      grid-template-columns: 440px minmax(0, 1fr);
+      gap: 54px;
+      align-items: start;
+    }
+
+    .process-sticky {
+      position: sticky;
+      top: 36px;
+      padding: 32px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-xl);
+      background: rgba(255, 250, 241, .70);
+      box-shadow: var(--shadow-soft);
+    }
+
+    .process-sticky h2 { margin: 18px 0 22px; }
+    .process-sticky p { color: var(--ink-2); font-size: 18px; line-height: 1.55; }
+
+    .timeline {
+      display: grid;
+      gap: 14px;
+      position: relative;
+    }
+
+    .step {
+      display: grid;
+      grid-template-columns: 72px 1fr;
+      gap: 20px;
+      padding: 22px;
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      background: rgba(255, 250, 241, .66);
+      transition: transform .25s var(--ease), background .25s var(--ease), border-color .25s var(--ease);
+    }
+
+    .step:hover {
+      transform: translateX(5px);
+      background: rgba(255, 250, 241, .92);
+      border-color: rgba(85, 201, 195, .42);
+    }
+
+    .step-no {
+      width: 56px;
+      height: 56px;
+      display: grid;
+      place-items: center;
+      border-radius: 18px;
+      background: var(--teal-soft);
+      color: var(--navy);
+      font-size: 16px;
+      font-weight: 700;
+    }
+
+    .step h3 {
+      margin-bottom: 8px;
+      font-size: 23px;
+      line-height: 1.1;
+      letter-spacing: -.035em;
+      font-weight: 700;
+    }
+
+    .step p { color: var(--muted); font-size: 18px; line-height: 1.52; }
+
+    .why-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+
+    .why-card {
+      min-height: 240px;
+      padding: 26px;
+      border: 1px solid var(--line);
+      border-radius: 28px;
+      background: rgba(255, 250, 241, .62);
+    }
+
+    .why-card h3 {
+      margin-bottom: 20px;
+      color: var(--ink);
+      font-size: 24px;
+      line-height: 1.12;
+      letter-spacing: -.04em;
+      font-weight: 700;
+    }
+
+    .why-card p { color: var(--muted); font-size: 18px; line-height: 1.55; }
+
+    .proof-section {
+      padding: 44px;
+      border-radius: 42px;
+      color: var(--paper);
+      background:
+        radial-gradient(circle at 100% 0%, rgba(85, 201, 195, .16), transparent 28%),
+        linear-gradient(135deg, var(--navy-dark), var(--navy-soft));
+      overflow: hidden;
+      position: relative;
+    }
+
+    .proof-section .section-title,
+    .proof-section .section-subtitle { color: var(--paper); }
+    .proof-section .section-subtitle { color: rgba(255, 250, 241, .74); }
+    .proof-section .eyebrow { color: rgba(255, 250, 241, .88); }
+
+    .proof-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+      margin-top: 38px;
+    }
+
+    .case-card {
+      min-height: 280px;
+      padding: 26px;
+      border: 1px solid rgba(255, 250, 241, .18);
+      border-radius: 28px;
+      background: rgba(255, 250, 241, .08);
+      transition: transform .25s var(--ease), background .25s var(--ease);
+    }
+
+    .case-card:hover { transform: translateY(-4px); background: rgba(255, 250, 241, .12); }
+
+    .case-card small {
+      display: block;
+      margin-bottom: 16px;
+      color: #dfc489;
+      font-size: 13px;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      font-weight: 700;
+    }
+
+    .case-card h3 {
+      margin-bottom: 18px;
+      font-size: 27px;
+      line-height: 1.08;
+      letter-spacing: -.04em;
+      font-weight: 700;
+    }
+
+    .case-card p {
+      color: rgba(255, 250, 241, .72);
+      font-size: 18px;
+      line-height: 1.54;
+    }
+
+    .case-card.wide {
+      grid-column: 1 / -1;
+      min-height: 210px;
+      display: grid;
+      grid-template-columns: .62fr 1fr;
+      gap: 34px;
+      align-items: center;
+    }
+
+    .case-card b { color: #dfc489; }
+
+    .cta-box {
+      padding: 58px 44px;
+      border: 1px solid rgba(255, 250, 241, .12);
+      border-radius: 42px;
+      color: var(--paper);
+      background:
+        radial-gradient(circle at 50% 8%, rgba(200, 166, 106, .18), transparent 34%),
+        linear-gradient(135deg, #426a10, #355c0b);
+      box-shadow: var(--shadow);
+    }
+
+    .cta-copy {
+      max-width: 890px;
+      margin: 0 auto 34px;
+      text-align: center;
+    }
+
+    .cta-copy .eyebrow { color: #ead68f; }
+    .cta-copy .eyebrow::before { background: #ead68f; }
+    .cta-copy h2 {
+      margin: 14px auto 18px;
+      max-width: 980px;
+      color: var(--paper);
+    }
+    .cta-copy p {
+      max-width: 780px;
+      margin: 0 auto;
+      color: rgba(255, 250, 241, .74);
+      font-size: 18px;
+      line-height: 1.55;
+    }
+
+    .send-list {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 8px;
+      max-width: 880px;
+      margin: 26px auto 0;
+    }
+
+    .send-list span {
+      padding: 8px 12px;
+      border: 1px solid rgba(255, 250, 241, .18);
+      border-radius: 999px;
+      background: rgba(255, 250, 241, .07);
+      color: rgba(255, 250, 241, .76);
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .form-card {
+      width: min(100%, 560px);
+      margin: 0 auto;
+      padding: 28px;
+      border: 1px solid rgba(255, 250, 241, .18);
+      border-radius: 24px;
+      background: rgba(255, 250, 241, .08);
+      backdrop-filter: blur(16px);
+    }
+
+    .field { margin-bottom: 16px; }
+
+    .field input,
+    .field textarea {
+      width: 100%;
+      border: 1px solid rgba(255, 250, 241, .26);
+      background: rgba(255, 250, 241, .08);
+      color: var(--paper);
+      border-radius: 10px;
+      padding: 16px;
+      outline: none;
+      min-height: 54px;
+      resize: vertical;
+      transition: border-color .2s ease, background .2s ease;
+    }
+
+    .field textarea { min-height: 96px; }
+
+    .field input::placeholder,
+    .field textarea::placeholder { color: rgba(255, 250, 241, .74); }
+
+    .field input:focus,
+    .field textarea:focus {
+      border-color: rgba(234, 214, 143, .70);
+      background: rgba(255, 250, 241, .12);
+    }
+
+    .form-card .btn {
+      width: 100%;
+      color: var(--paper);
+      background: #b57919;
+      box-shadow: none;
+    }
+
+    .form-card .btn:hover { background: #a56b14; }
+
+    .form-note {
+      margin-top: 14px;
+      color: rgba(255, 250, 241, .66);
+      font-size: 14px;
+      line-height: 1.45;
+      text-align: center;
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(22px);
+      transition: opacity .65s var(--ease), transform .65s var(--ease);
+    }
+
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    
+
+    /* Zones section v2 */
+    .zones-grid-v2 {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 20px;
+      align-items: stretch;
+    }
+
+    .zone-media-card {
+      display: grid;
+      grid-template-rows: 300px auto;
+      border: 1px solid var(--line);
+      border-radius: 30px;
+      background: rgba(255, 250, 241, .72);
+      overflow: hidden;
+      box-shadow: var(--shadow-soft);
+      transition: transform .25s var(--ease), box-shadow .25s var(--ease), background .25s var(--ease);
+    }
+
+    .zone-media-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 22px 52px rgba(16, 33, 57, .12);
+      background: rgba(255, 250, 241, .92);
+    }
+
+    .zone-media-card.wide {
+      grid-column: span 2;
+      grid-template-columns: 1.1fr .9fr;
+      grid-template-rows: none;
+      min-height: 360px;
+    }
+
+    .zone-media {
+      position: relative;
+      background: var(--bg-soft);
+      overflow: hidden;
+    }
+
+    .zone-media img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .zone-copy {
+      position: relative;
+      padding: 26px 28px 28px;
+    }
+
+    .zone-number {
+      position: absolute;
+      right: 22px;
+      top: 16px;
+      color: rgba(16, 33, 57, .12);
+      font-size: 58px;
+      line-height: 1;
+      letter-spacing: -.06em;
+      font-weight: 700;
+      pointer-events: none;
+    }
+
+    .zone-copy h3 {
+      max-width: 500px;
+      margin: 0 64px 10px 0;
+      color: var(--ink);
+      font-size: 32px;
+      line-height: 1.06;
+      letter-spacing: -.04em;
+      font-weight: 700;
+    }
+
+    .zone-copy p {
+      max-width: 560px;
+      color: var(--muted);
+      font-size: 18px;
+      line-height: 1.55;
+    }
+
+    .zones-callout-v2 {
+      grid-column: 1 / -1;
+      display: grid;
+      grid-template-columns: minmax(0, .75fr) minmax(0, 1fr) auto;
+      gap: 24px;
+      align-items: center;
+      padding: 26px 28px;
+      border-radius: 28px;
+      color: var(--paper);
+      background: linear-gradient(135deg, var(--navy), var(--navy-dark));
+      box-shadow: var(--shadow-soft);
+    }
+
+    .zones-callout-v2 strong {
+      font-size: 32px;
+      line-height: 1.08;
+      letter-spacing: -.04em;
+      font-weight: 700;
+    }
+
+    .zones-callout-v2 p {
+      color: rgba(255, 250, 241, .76);
+      font-size: 18px;
+      line-height: 1.55;
+    }
+
+
+
+    /* Zones layout final: 3 + 3 + 1/CTA */
+    .zones-grid-v2 {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 20px;
+    }
+
+    .zone-media-card,
+    .zone-media-card.wide {
+      grid-column: auto;
+      display: grid;
+      grid-template-columns: 1fr;
+      grid-template-rows: 300px auto;
+      min-height: 0;
+    }
+
+    .zones-callout-v2 {
+      grid-column: span 2;
+      min-height: 100%;
+      grid-template-columns: minmax(0, .78fr) minmax(0, 1fr) auto;
+      align-content: center;
+    }
+
+    .zones-callout-v2 strong {
+      max-width: 520px;
+    }
+
+    @media (min-width: 1400px) {
+      .zones-grid-v2 {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
+      .zone-media-card,
+      .zone-media-card.wide {
+        grid-column: auto;
+        grid-template-columns: 1fr;
+        grid-template-rows: 320px auto;
+      }
+
+      .zones-callout-v2 {
+        grid-column: span 2;
+      }
+    }
+
+    @media (min-width: 1400px) {
+      .hero { min-height: 760px; }
+
+      .hero h1,
+      .section-title,
+      .process-sticky h2,
+      .cta-copy h2 {
+        font-size: 48px;
+      }
+
+      .hero-visual { min-height: 600px; }
+
+      .stats { padding: 38px; }
+
+      .stat { min-height: 220px; }
+
+      .audience-panel { min-height: 560px; }
+
+      .panel-title { font-size: 44px; }
+
+      .proof-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .case-card { min-height: 300px; }
+    }
+
+    @media (max-width: 1100px) {
+      .hero-grid,
+      .section-head,
+      .audience-layout,
+      .zones-layout,
+      .process-wrap,
+      .proof-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .zones-grid-v2 { grid-template-columns: 1fr 1fr; }
+      .zone-media-card.wide { grid-template-columns: 1fr; grid-template-rows: 280px auto; }
+      .zones-callout-v2 { grid-template-columns: 1fr; grid-column: 1 / -1; }
+
+      .hero { min-height: auto; padding-top: 50px; }
+      .hero-visual { min-height: 560px; }
+      .visual-card.main { left: 0; width: 78%; }
+      .mini-card.one { right: 0; }
+      .mini-card.two { left: 8%; }
+      .mini-card.three { right: 4%; }
+      .stats-grid { grid-template-columns: repeat(2, 1fr); }
+      .audience-tabs { position: relative; top: 0; grid-template-columns: repeat(2, 1fr); }
+      .zones-intro, .process-sticky { position: relative; top: 0; }
+      .zone-callout { grid-template-columns: 1fr; }
+      .why-grid { grid-template-columns: repeat(2, 1fr); }
+      .case-card.wide { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 760px) {
+      body { font-size: 17px; }
+      .page-shell { width: min(100% - 24px, 1240px); }
+      .section { padding: 72px 0; }
+      .section.compact { padding: 46px 0; }
+      .section-title, .hero h1, .process-sticky h2, .cta-copy h2 { font-size: 38px; }
+      .hero h1 { max-width: none; }
+      .lead, .section-subtitle, .step p, .zone-card p, .why-card p, .panel-card p { font-size: 17px; }
+      .hero-actions { flex-direction: column; align-items: stretch; }
+      .btn { width: 100%; }
+      .helper { font-size: 15px; }
+      .hero-visual { min-height: 640px; }
+      .visual-card.main { width: 100%; left: 0; top: 0; min-height: 360px; }
+      .room-plan { inset: 24px; }
+      .mini-card { width: calc(100% - 28px); }
+      .mini-card.one { top: 382px; right: 0; }
+      .mini-card.two { top: 530px; left: 0; }
+      .mini-card.three { display: none; }
+      .stats { padding: 16px; }
+      .stats-grid { grid-template-columns: 1fr; }
+      .stat { min-height: 150px; }
+      .audience-tabs { grid-template-columns: 1fr; }
+      .audience-panel { padding: 20px; min-height: auto; }
+      .panel-grid { grid-template-columns: 1fr; }
+      .panel-title { font-size: 32px; }
+      .zones { grid-template-columns: 1fr; }
+      .zone-card.wide { grid-column: auto; }
+      .zones-intro { min-height: auto; }
+      .zones-intro h2 { font-size: 34px; }
+      .zones-grid-v2 { grid-template-columns: 1fr; }
+      .zone-media-card { grid-template-rows: 220px auto; }
+      .zone-media-card.wide { grid-column: auto; grid-template-columns: 1fr; grid-template-rows: 220px auto; }
+      .zone-copy h3 { font-size: 26px; }
+      .zone-number { font-size: 48px; }
+      .zones-callout-v2 { grid-column: 1 / -1; }
+      .step { grid-template-columns: 1fr; }
+      .why-grid { grid-template-columns: 1fr; }
+      .proof-section, .cta-box { padding: 24px; border-radius: 30px; }
+      .case-card { min-height: auto; }
+    }
+  
+    /* Hero photo slider + final zones CTA polish */
+    .slider-card {
+      background: var(--navy-dark);
+    }
+
+    .hero-slider {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+    }
+
+    .hero-slide {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0;
+      transform: scale(1.035);
+      transition: opacity .85s var(--ease), transform 3.4s ease;
+    }
+
+    .hero-slide.active {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    .slider-overlay {
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      background:
+        linear-gradient(180deg, rgba(15, 33, 58, .08) 0%, rgba(15, 33, 58, .50) 100%),
+        radial-gradient(circle at 18% 12%, rgba(85, 201, 195, .22), transparent 36%);
+    }
+
+    .slider-card .visual-label {
+      z-index: 2;
+    }
+
+    .zones-callout-v2 {
+      min-height: 100%;
+      padding: 34px 36px;
+      grid-template-columns: minmax(0, 1fr) auto;
+      grid-template-areas:
+        "title button"
+        "text button";
+      column-gap: 42px;
+      row-gap: 14px;
+      align-items: center;
+      align-content: center;
+    }
+
+    .zones-callout-v2 strong {
+      grid-area: title;
+      max-width: 650px;
+      font-size: 34px;
+      line-height: 1.04;
+    }
+
+    .zones-callout-v2 p {
+      grid-area: text;
+      max-width: 680px;
+    }
+
+    .zones-callout-v2 .btn {
+      grid-area: button;
+      width: auto;
+      white-space: nowrap;
+      align-self: center;
+    }
+
+    @media (min-width: 1400px) {
+      .zones-callout-v2 {
+        padding: 42px;
+      }
+
+      .zones-callout-v2 strong {
+        font-size: 38px;
+      }
+    }
+
+    @media (max-width: 1100px) {
+      .zones-callout-v2 {
+        grid-template-columns: 1fr;
+        grid-template-areas:
+          "title"
+          "text"
+          "button";
+        align-items: start;
+      }
+
+      .zones-callout-v2 .btn {
+        width: fit-content;
+      }
+    }
+
+    @media (max-width: 760px) {
+      .zones-callout-v2 {
+        padding: 24px;
+      }
+
+      .zones-callout-v2 strong {
+        font-size: 28px;
+      }
+
+      .zones-callout-v2 .btn {
+        width: 100%;
+      }
+    }
+
+  
+    /* Hero slider refinements */
+    .hero-grid {
+      grid-template-columns: minmax(0, 620px) minmax(720px, 1fr);
+      gap: 110px;
+      align-items: center;
+    }
+
+    .hero-visual {
+      min-height: 760px;
+    }
+
+    .visual-card {
+      border: 0;
+    }
+
+    .visual-card.main,
+    .slider-card {
+      inset: 18px 0 auto 42px;
+      width: min(760px, calc(100% - 42px));
+      min-height: 620px;
+      border-radius: 36px;
+      background: transparent;
+      box-shadow: 0 28px 80px rgba(16, 33, 57, .18);
+      overflow: hidden;
+    }
+
+    .hero-slider {
+      border-radius: 36px;
+    }
+
+    .hero-slide {
+      border: 0;
+    }
+
+    .slider-overlay {
+      background:
+        linear-gradient(180deg, rgba(15, 33, 58, .02) 0%, rgba(15, 33, 58, .12) 100%),
+        radial-gradient(circle at 18% 12%, rgba(85, 201, 195, .14), transparent 36%);
+    }
+
+    .slider-card .visual-label {
+      display: none;
+    }
+
+    .mini-card {
+      width: 320px;
+      min-height: 176px;
+      padding: 22px;
+      border-radius: 24px;
+      background: rgba(255, 250, 241, .88);
+      box-shadow: 0 22px 58px rgba(16, 33, 57, .16);
+    }
+
+    .mini-card h3 {
+      font-size: 20px;
+      margin-bottom: 12px;
+    }
+
+    .mini-card p {
+      font-size: 16px;
+      line-height: 1.5;
+    }
+
+    .mini-card.one { right: 0; top: 34px; }
+    .mini-card.two { left: 0; top: 470px; }
+    .mini-card.three { right: 26px; bottom: 10px; width: 340px; }
+
+    /* Why us icons */
+    .why-card {
+      position: relative;
+      padding-top: 92px;
+    }
+
+    .why-icon {
+      position: absolute;
+      top: 24px;
+      left: 24px;
+      width: 48px;
+      height: 48px;
+      border-radius: 14px;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(135deg, rgba(85, 201, 195, .16), rgba(200, 166, 106, .18));
+      color: var(--navy);
+      border: 1px solid rgba(16, 33, 57, .10);
+      box-shadow: 0 10px 24px rgba(16, 33, 57, .08);
+    }
+
+    .why-icon svg {
+      width: 24px;
+      height: 24px;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 1.9;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    @media (max-width: 1100px) {
+      .hero-grid {
+        grid-template-columns: 1fr;
+        gap: 48px;
+      }
+
+      .hero-visual {
+        min-height: 740px;
+      }
+
+      .visual-card.main,
+      .slider-card {
+        left: 0;
+        width: min(100%, 760px);
+      }
+
+      .mini-card {
+        width: 280px;
+      }
+
+      .mini-card.two { top: 500px; }
+      .mini-card.three { right: 0; width: 300px; }
+    }
+
+    @media (max-width: 760px) {
+      .hero-visual {
+        min-height: 780px;
+      }
+
+      .visual-card.main,
+      .slider-card {
+        inset: 0 0 auto 0;
+        width: 100%;
+        min-height: 380px;
+        border-radius: 28px;
+      }
+
+      .hero-slider {
+        border-radius: 28px;
+      }
+
+      .mini-card {
+        width: calc(100% - 18px);
+        min-height: 142px;
+        padding: 18px;
+      }
+
+      .mini-card.one { top: 408px; right: 0; }
+      .mini-card.two { top: 564px; left: 0; }
+      .mini-card.three { display: block; top: 720px; right: 0; bottom: auto; width: calc(100% - 18px); }
+
+      .why-card {
+        padding-top: 82px;
+      }
+    }
+
+  
+    /* Proof / real cases section v2 */
+    .proof-section.real-cases {
+      padding: 54px;
+    }
+
+    .real-cases .section-head {
+      grid-template-columns: minmax(0, .82fr) minmax(0, 1fr);
+      align-items: end;
+      margin-bottom: 34px;
+    }
+
+    .real-cases .section-title {
+      max-width: 820px;
+    }
+
+    .real-cases-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 20px;
+      margin-top: 40px;
+    }
+
+    .real-case-card {
+      min-height: 520px;
+      display: grid;
+      grid-template-rows: 250px 1fr;
+      overflow: hidden;
+      border: 1px solid rgba(255, 250, 241, .18);
+      border-radius: 30px;
+      background: rgba(255, 250, 241, .08);
+      transition: transform .25s var(--ease), background .25s var(--ease), border-color .25s var(--ease);
+    }
+
+    .real-case-card:hover {
+      transform: translateY(-5px);
+      background: rgba(255, 250, 241, .12);
+      border-color: rgba(255, 250, 241, .28);
+    }
+
+    .real-case-image {
+      position: relative;
+      overflow: hidden;
+      background: rgba(255, 250, 241, .08);
+    }
+
+    .real-case-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      opacity: .88;
+      transition: transform .45s var(--ease), opacity .25s var(--ease);
+    }
+
+    .real-case-card:hover .real-case-image img {
+      transform: scale(1.035);
+      opacity: 1;
+    }
+
+    .real-case-image::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(15, 33, 58, 0) 42%, rgba(15, 33, 58, .42) 100%);
+    }
+
+    .real-case-body {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      padding: 26px;
+    }
+
+    .real-case-body small {
+      color: #dfc489;
+      font-size: 13px;
+      line-height: 1;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      font-weight: 700;
+    }
+
+    .real-case-body h3 {
+      max-width: 420px;
+      color: var(--paper);
+      font-size: 30px;
+      line-height: 1.08;
+      letter-spacing: -.04em;
+      font-weight: 700;
+    }
+
+    .real-case-body p {
+      color: rgba(255, 250, 241, .74);
+      font-size: 18px;
+      line-height: 1.55;
+    }
+
+    .real-case-link {
+      margin-top: auto;
+      display: inline-flex;
+      width: fit-content;
+      align-items: center;
+      gap: 10px;
+      color: var(--paper);
+      font-size: 15px;
+      font-weight: 700;
+      opacity: .86;
+    }
+
+    .real-case-link::after {
+      content: "→";
+      color: #dfc489;
+      transition: transform .25s var(--ease);
+    }
+
+    .real-case-link:hover::after {
+      transform: translateX(4px);
+    }
+
+    @media (max-width: 1100px) {
+      .real-cases .section-head,
+      .real-cases-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .real-case-card {
+        min-height: auto;
+        grid-template-columns: .82fr 1fr;
+        grid-template-rows: none;
+      }
+    }
+
+    @media (max-width: 760px) {
+      .proof-section.real-cases {
+        padding: 24px;
+      }
+
+      .real-case-card {
+        grid-template-columns: 1fr;
+        grid-template-rows: 220px auto;
+      }
+
+      .real-case-body h3 {
+        font-size: 26px;
+      }
+    }
+
+  
+    /* Process section redesign with hover images */
+    .process-wrap {
+      display: grid;
+      grid-template-columns: 360px minmax(0, 1fr);
+      gap: 46px;
+      align-items: start;
+    }
+
+    .process-sticky {
+      top: 36px;
+      padding: 28px 28px 30px;
+    }
+
+    .process-sticky h2 {
+      margin: 16px 0 18px;
+      max-width: 280px;
+      font-size: 38px;
+      line-height: 1.02;
+      letter-spacing: -.045em;
+    }
+
+    .process-sticky p {
+      max-width: 270px;
+      font-size: 17px;
+      line-height: 1.55;
+    }
+
+    .timeline {
+      gap: 16px;
+    }
+
+    .step {
+      position: relative;
+      grid-template-columns: 72px minmax(0, 1fr);
+      gap: 18px;
+      padding: 18px;
+      overflow: hidden;
+    }
+
+    .step-main {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 0px;
+      gap: 0;
+      align-items: center;
+      min-width: 0;
+      transition: grid-template-columns .35s var(--ease), gap .35s var(--ease);
+    }
+
+    .step-copy {
+      min-width: 0;
+    }
+
+    .step h3 {
+      margin-bottom: 6px;
+      font-size: 21px;
+    }
+
+    .step p {
+      font-size: 17px;
+      line-height: 1.48;
+    }
+
+    .step-extended {
+      max-height: 0;
+      opacity: 0;
+      overflow: hidden;
+      transition: max-height .3s var(--ease), opacity .25s var(--ease), margin-top .25s var(--ease);
+      margin-top: 0;
+      padding-right: 6px;
+    }
+
+    .step-preview {
+      width: 0;
+      opacity: 0;
+      overflow: hidden;
+      border-radius: 20px;
+      background: rgba(15, 33, 58, .04);
+      box-shadow: inset 0 0 0 1px rgba(15, 33, 58, .08);
+      transform: translateX(18px);
+      transition: width .35s var(--ease), opacity .3s var(--ease), transform .35s var(--ease);
+    }
+
+    .step-preview img {
+      display: block;
+      width: 100%;
+      aspect-ratio: 4 / 3;
+      object-fit: cover;
+    }
+
+    .step-actions {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      margin-top: 14px;
+    }
+
+    .step-cta {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 42px;
+      padding: 0 18px;
+      border-radius: 999px;
+      border: 1px solid rgba(15, 33, 58, .14);
+      background: rgba(255,250,241,.8);
+      color: var(--navy);
+      font-size: 14px;
+      font-weight: 700;
+      transition: background .25s var(--ease), border-color .25s var(--ease), transform .25s var(--ease);
+    }
+
+    .step-cta:hover {
+      background: rgba(85, 201, 195, .14);
+      border-color: rgba(85, 201, 195, .45);
+      transform: translateY(-1px);
+    }
+
+    .step:hover,
+    .step:focus-within {
+      transform: translateX(4px);
+      background: rgba(255, 250, 241, .94);
+      border-color: rgba(85, 201, 195, .44);
+    }
+
+    .step:hover .step-main,
+    .step:focus-within .step-main {
+      grid-template-columns: minmax(0, 1fr) 250px;
+      gap: 18px;
+    }
+
+    .step:hover .step-preview,
+    .step:focus-within .step-preview {
+      width: 250px;
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    .step:hover .step-extended,
+    .step:focus-within .step-extended {
+      max-height: 220px;
+      opacity: 1;
+      margin-top: 10px;
+    }
+
+    @media (max-width: 1200px) {
+      .process-wrap {
+        grid-template-columns: 300px minmax(0, 1fr);
+      }
+      .process-sticky h2 {
+        font-size: 34px;
+      }
+      .step:hover .step-main,
+      .step:focus-within .step-main {
+        grid-template-columns: minmax(0, 1fr) 210px;
+      }
+      .step:hover .step-preview,
+      .step:focus-within .step-preview {
+        width: 210px;
+      }
+    }
+
+    @media (max-width: 980px) {
+      .process-wrap {
+        grid-template-columns: 1fr;
+      }
+
+      .process-sticky p,
+      .process-sticky h2 {
+        max-width: none;
+      }
+
+      .step-main,
+      .step:hover .step-main,
+      .step:focus-within .step-main {
+        grid-template-columns: 1fr;
+        gap: 14px;
+      }
+
+      .step-preview,
+      .step:hover .step-preview,
+      .step:focus-within .step-preview {
+        width: 100%;
+        opacity: 1;
+        transform: none;
+      }
+
+      .step-extended {
+        max-height: none;
+        opacity: 1;
+        margin-top: 10px;
+      }
+    }
+
+    @media (max-width: 760px) {
+      .process-sticky h2 {
+        font-size: 30px;
+      }
+      .step {
+        grid-template-columns: 56px minmax(0, 1fr);
+        padding: 16px;
+      }
+      .step-no {
+        width: 44px;
+        height: 44px;
+        border-radius: 14px;
+      }
+    }
+
+
+    /* Section-level CTA buttons */
+    .section-head-actions {
+      display: grid;
+      gap: 20px;
+      justify-items: start;
+      align-content: end;
+    }
+
+    .section-inline-cta {
+      width: fit-content;
+      min-height: 46px;
+      padding-inline: 20px;
+      font-size: 15px;
+    }
+
+    .proof-section .section-inline-cta,
+    .cta-box .section-inline-cta {
+      background: rgba(255, 250, 241, .92);
+      color: var(--ink);
+      border-color: rgba(255, 250, 241, .18);
+    }
+
+    /* Process cards v4 */
+    .process-wrap-cards {
+      grid-template-columns: 360px minmax(0, 1fr);
+      gap: 48px;
+    }
+
+    .process-wrap-cards .process-sticky {
+      padding: 28px;
+    }
+
+    .process-wrap-cards .process-sticky h2 {
+      max-width: 280px;
+      margin: 16px 0 18px;
+      font-size: 36px;
+      line-height: 1.04;
+      letter-spacing: -.045em;
+    }
+
+    .process-wrap-cards .process-sticky p {
+      max-width: 280px;
+      margin-bottom: 22px;
+      font-size: 17px;
+    }
+
+    .process-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .process-card {
+      position: relative;
+      min-height: 330px;
+      border-radius: 28px;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      background: var(--navy-dark);
+      box-shadow: var(--shadow-soft);
+      isolation: isolate;
+      cursor: default;
+      transition: transform .28s var(--ease), box-shadow .28s var(--ease), border-color .28s var(--ease);
+    }
+
+    .process-card::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      background:
+        linear-gradient(180deg, rgba(15, 33, 58, .08) 0%, rgba(15, 33, 58, .42) 54%, rgba(15, 33, 58, .80) 100%);
+      transition: background .32s var(--ease);
+    }
+
+    .process-card img {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transform: scale(1.01);
+      transition: transform .5s var(--ease), filter .35s var(--ease);
+    }
+
+    .process-card-top {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      z-index: 2;
+    }
+
+    .process-card-top span {
+      width: 54px;
+      height: 54px;
+      display: grid;
+      place-items: center;
+      border-radius: 17px;
+      background: rgba(255, 250, 241, .90);
+      color: var(--navy-dark);
+      font-size: 16px;
+      font-weight: 700;
+      box-shadow: 0 14px 30px rgba(16, 33, 57, .14);
+    }
+
+    .process-card-body {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 2;
+      padding: 24px;
+      color: var(--paper);
+      transform: translateY(calc(100% - 74px));
+      transition: transform .36s var(--ease);
+    }
+
+    .process-card-body h3 {
+      max-width: 500px;
+      min-height: 52px;
+      margin: 0;
+      font-size: 26px;
+      line-height: 1.05;
+      letter-spacing: -.04em;
+      font-weight: 700;
+    }
+
+    .process-card-body p {
+      max-width: 610px;
+      margin-top: 16px;
+      color: rgba(255, 250, 241, .78);
+      font-size: 17px;
+      line-height: 1.5;
+      opacity: 0;
+      transform: translateY(10px);
+      transition: opacity .28s var(--ease), transform .32s var(--ease);
+    }
+
+    .process-card:hover,
+    .process-card:focus-within {
+      transform: translateY(-5px);
+      border-color: rgba(85, 201, 195, .42);
+      box-shadow: 0 28px 70px rgba(16, 33, 57, .18);
+    }
+
+    .process-card:hover::after,
+    .process-card:focus-within::after {
+      background:
+        linear-gradient(180deg, rgba(15, 33, 58, .10) 0%, rgba(15, 33, 58, .50) 44%, rgba(15, 33, 58, .88) 100%);
+    }
+
+    .process-card:hover img,
+    .process-card:focus-within img {
+      transform: scale(1.055);
+      filter: saturate(1.03);
+    }
+
+    .process-card:hover .process-card-body,
+    .process-card:focus-within .process-card-body {
+      transform: translateY(0);
+    }
+
+    .process-card:hover .process-card-body p,
+    .process-card:focus-within .process-card-body p {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    @media (min-width: 1400px) {
+      .process-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .process-card {
+        min-height: 360px;
+      }
+    }
+
+    @media (max-width: 1100px) {
+      .section-head-actions {
+        justify-items: start;
+      }
+
+      .process-wrap-cards {
+        grid-template-columns: 1fr;
+      }
+
+      .process-wrap-cards .process-sticky h2,
+      .process-wrap-cards .process-sticky p {
+        max-width: none;
+      }
+    }
+
+    @media (max-width: 760px) {
+      .section-head-actions .btn {
+        width: 100%;
+      }
+
+      .process-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .process-card {
+        min-height: 330px;
+      }
+
+      .process-card-body {
+        transform: translateY(0);
+      }
+
+      .process-card-body p {
+        opacity: 1;
+        transform: none;
+      }
+    }
+
+  
+    /* Requested refinements */
+    .process-card {
+      border: 0 !important;
+      box-shadow: 0 24px 64px rgba(16, 33, 57, .13);
+    }
+
+    .process-card img {
+      outline: 0;
+      border: 0;
+    }
+
+    .process-card:hover,
+    .process-card:focus-within {
+      border: 0 !important;
+    }
+
+    .cta-box {
+      background:
+        radial-gradient(circle at 50% 6%, rgba(85, 201, 195, .14), transparent 34%),
+        linear-gradient(135deg, var(--navy-dark), var(--navy));
+      color: var(--paper);
+    }
+
+    .cta-copy {
+      margin-bottom: 30px;
+    }
+
+    .cta-copy .eyebrow {
+      color: #dfc489;
+    }
+
+    .cta-copy .eyebrow::before {
+      background: #dfc489;
+    }
+
+    .form-card .btn {
+      background: #b57919;
+      color: var(--paper);
+    }
+
+    .expert-section {
+      padding: 56px;
+      border-radius: 42px;
+      background:
+        radial-gradient(circle at 100% 0%, rgba(85, 201, 195, .12), transparent 30%),
+        rgba(255, 250, 241, .54);
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow-soft);
+    }
+
+    .expert-head {
+      max-width: 1080px;
+      margin: 0 auto 38px;
+      text-align: center;
+    }
+
+    .expert-head .eyebrow {
+      justify-content: center;
+      color: var(--gold);
+      margin-bottom: 18px;
+    }
+
+    .expert-head h2 {
+      max-width: 980px;
+      margin: 0 auto;
+      font-size: 48px;
+      line-height: 1.05;
+      letter-spacing: -.05em;
+      color: var(--ink);
+    }
+
+    .expert-head p {
+      max-width: 820px;
+      margin: 20px auto 0;
+      color: var(--ink-2);
+      font-size: 18px;
+      line-height: 1.55;
+    }
+
+    .expert-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(460px, .95fr);
+      gap: 24px;
+      align-items: stretch;
+    }
+
+    .expert-photo {
+      min-height: 430px;
+      border-radius: 26px;
+      overflow: hidden;
+      box-shadow: var(--shadow-soft);
+      background: var(--bg-soft);
+    }
+
+    .expert-photo img {
+      width: 100%;
+      height: 100%;
+      display: block;
+      object-fit: cover;
+    }
+
+    .expert-card {
+      padding: 34px;
+      border-radius: 26px;
+      color: var(--paper);
+      background:
+        radial-gradient(circle at 100% 0%, rgba(85, 201, 195, .18), transparent 32%),
+        linear-gradient(135deg, var(--navy), var(--navy-dark));
+    }
+
+    .expert-card h3 {
+      max-width: 560px;
+      margin-bottom: 18px;
+      font-size: 32px;
+      line-height: 1.08;
+      letter-spacing: -.04em;
+      color: var(--paper);
+    }
+
+    .expert-card > p {
+      color: rgba(255, 250, 241, .76);
+      line-height: 1.55;
+      max-width: 620px;
+    }
+
+    .expert-points {
+      display: grid;
+      gap: 0;
+      margin-top: 26px;
+      border-top: 1px solid rgba(255, 250, 241, .14);
+    }
+
+    .expert-point {
+      display: grid;
+      grid-template-columns: 48px 1fr;
+      gap: 18px;
+      padding: 20px 0;
+      border-bottom: 1px solid rgba(255, 250, 241, .14);
+    }
+
+    .expert-point span {
+      width: 38px;
+      height: 38px;
+      display: grid;
+      place-items: center;
+      border-radius: 12px;
+      background: rgba(200, 166, 106, .18);
+      color: #dfc489;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .expert-point strong {
+      display: block;
+      margin-bottom: 6px;
+      color: var(--paper);
+      font-size: 18px;
+    }
+
+    .expert-point p {
+      color: rgba(255, 250, 241, .68);
+      font-size: 16px;
+      line-height: 1.5;
+    }
+
+    .expert-bottom {
+      grid-column: 1 / -1;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 24px;
+      align-items: center;
+      padding: 24px 28px;
+      border-radius: 24px;
+      background: linear-gradient(135deg, var(--navy-dark), var(--navy));
+      color: var(--paper);
+    }
+
+    .expert-bottom strong {
+      display: block;
+      margin-bottom: 6px;
+      font-size: 22px;
+      letter-spacing: -.025em;
+    }
+
+    .expert-bottom p {
+      color: rgba(255, 250, 241, .68);
+      font-size: 16px;
+    }
+
+    .expert-btn {
+      background: #b57919;
+      box-shadow: none;
+      white-space: nowrap;
+    }
+
+    .faq-section {
+      padding: 48px;
+      border: 1px solid var(--line);
+      border-radius: 42px;
+      background: rgba(255, 250, 241, .62);
+      box-shadow: var(--shadow-soft);
+    }
+
+    .faq-list {
+      display: grid;
+      gap: 12px;
+      margin-top: 34px;
+    }
+
+    .faq-item {
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      background: rgba(255, 250, 241, .72);
+      overflow: hidden;
+    }
+
+    .faq-item summary {
+      list-style: none;
+      cursor: pointer;
+      padding: 22px 62px 22px 24px;
+      position: relative;
+      color: var(--ink);
+      font-size: 21px;
+      line-height: 1.25;
+      font-weight: 700;
+      letter-spacing: -.025em;
+    }
+
+    .faq-item summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .faq-item summary::after {
+      content: "+";
+      position: absolute;
+      right: 24px;
+      top: 19px;
+      width: 32px;
+      height: 32px;
+      display: grid;
+      place-items: center;
+      border-radius: 999px;
+      background: var(--teal-soft);
+      color: var(--navy);
+      font-size: 22px;
+      line-height: 1;
+    }
+
+    .faq-item[open] summary::after {
+      content: "−";
+      background: var(--gold-soft);
+    }
+
+    .faq-item p {
+      max-width: 980px;
+      padding: 0 24px 24px;
+      color: var(--muted);
+      font-size: 18px;
+      line-height: 1.55;
+    }
+
+    @media (max-width: 1100px) {
+      .expert-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .expert-bottom {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 760px) {
+      .expert-section,
+      .faq-section {
+        padding: 24px;
+        border-radius: 30px;
+      }
+
+      .expert-head h2 {
+        font-size: 34px;
+      }
+
+      .expert-photo {
+        min-height: 300px;
+      }
+
+      .expert-card {
+        padding: 24px;
+      }
+
+      .expert-card h3 {
+        font-size: 26px;
+      }
+
+      .expert-btn {
+        width: 100%;
+      }
+
+      .faq-item summary {
+        font-size: 18px;
+      }
+    }
+
+  </style>
+</head>
+<body>
+  <main>
+    <section class="hero page-shell">
+      <div class="hero-grid">
+        <div class="hero-copy reveal">
+          <div class="kicker"><span class="dot"></span> Медицинские объекты · мебельное оснащение</div>
+          <h1>Комплексное мебельное оснащение <span class="soft">медицинских объектов</span></h1>
+          <p class="lead">Подбираем, проектируем, поставляем и монтируем мебельные решения для медицинских кабинетов, социальных учреждений, санаториев, реабилитационных центров и объектов после капитального ремонта.</p>
+          <div class="hero-actions">
+            <a class="btn" href="#request">Рассчитать оснащение объекта</a>
+          </div>
+          <p class="helper">Пришлите проект, ведомость или описание объекта — подготовим предварительную комплектацию и расчёт.</p>
+        </div>
+
+        <div class="hero-visual reveal" aria-hidden="true">
+          <div class="orb cyan"></div>
+          <div class="orb gold"></div>
+
+          <div class="visual-card main slider-card">
+            <div class="hero-slider">
+              <img class="hero-slide active" src="1.png" alt="">
+              <img class="hero-slide" src="2.png" alt="">
+              <img class="hero-slide" src="3.png" alt="">
+              <img class="hero-slide" src="4.png" alt="">
+              <img class="hero-slide" src="5.png" alt="">
+              <img class="hero-slide" src="6.png" alt="">
+              <img class="hero-slide" src="7.png" alt="">
+            </div>
+            <div class="slider-overlay"></div>
+</div>
+
+          <div class="visual-card mini-card one">
+            <h3>Берём мебельную часть проекта</h3>
+            <p>Анализ помещений, комплектация, поставка, монтаж, документы и сервисное сопровождение.</p>
+          </div>
+          <div class="visual-card mini-card two">
+            <h3>Проект под реальные сроки</h3>
+            <p>Учитываем график стройки, этапность, регион, ограничения площадки и будущую эксплуатацию.</p>
+          </div>
+          <div class="visual-card mini-card three">
+            <h3>Не исчезаем после сдачи</h3>
+            <p>Помогаем с профилактикой, регулировкой мебели и вопросами эксплуатации.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section compact page-shell reveal">
+      <div class="stats">
+        <div class="section-head">
+          <div>
+            <span class="eyebrow">02 — ДОВЕРИЕ</span>
+            <h2 class="section-title">18 лет там, где важны сроки и документы</h2>
+          </div>
+          <div class="section-head-actions"><p class="section-subtitle">Союзпоставка работает с 2008 года и занимается комплексным оснащением социальных, образовательных и государственных объектов. Этот опыт компания переносит в медицинскую и социальную инфраструктуру.</p><a class="btn secondary section-inline-cta" href="#request">Обсудить объект</a></div>
+        </div>
+        <div class="stats-grid">
+          <div class="stat"><b>18</b><span>лет работаем с комплексным оснащением объектов</span></div>
+          <div class="stat"><b>500+</b><span>объектов оснащены в разных регионах России</span></div>
+          <div class="stat"><b>58+</b><span>регионов, включая сложные направления</span></div>
+          <div class="stat"><b>1</b><span>подрядчик от подбора и поставки до монтажа и сервиса</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section page-shell" id="clients">
+      <div class="section-head reveal">
+        <div>
+          <span class="eyebrow">03 — АУДИТОРИЯ</span>
+          <h2 class="section-title">Кому помогаем закрыть оснащение</h2>
+        </div>
+        <div class="section-head-actions"><p class="section-subtitle">Работаем с теми, кому нужно не просто купить мебель, а довести объект до готовности: по срокам, комплектации, документам и монтажу.</p><a class="btn secondary section-inline-cta" href="#request">Подобрать решение</a></div>
+      </div>
+
+      <div class="audience-layout reveal">
+        <div class="audience-tabs" role="tablist" aria-label="Тип клиента">
+          <button class="audience-tab active" data-target="panel-builders"><small>01</small><strong>Генподрядчики</strong></button>
+          <button class="audience-tab" data-target="panel-state"><small>02</small><strong>Госучреждения</strong></button>
+          <button class="audience-tab" data-target="panel-private"><small>03</small><strong>Частные клиники</strong></button>
+          <button class="audience-tab" data-target="panel-tender"><small>04</small><strong>Проектные и тендерные отделы</strong></button>
+        </div>
+
+        <div class="audience-panel active" id="panel-builders">
+          <div class="panel-grid">
+            <h3 class="panel-title">Закрыть мебельную часть объекта без срыва сроков</h3>
+            <div class="panel-card"><h4>Задача</h4><p>Закрыть мебельную часть объекта без лишней координации поставщиков.</p></div>
+            <div class="panel-card"><h4>Что делаем</h4><p>Собираем комплектацию, согласуем решения, организуем поставку и монтаж, готовим документы.</p></div>
+            <div class="panel-card wide"><h4>Что получает клиент</h4><p>Один ответственный партнёр вместо разрозненных поставщиков и ручного контроля каждой позиции.</p></div>
+          </div>
+        </div>
+
+        <div class="audience-panel" id="panel-state">
+          <div class="panel-grid">
+            <h3 class="panel-title">Оснащение под проект, бюджет, сроки и требования закупки</h3>
+            <div class="panel-card"><h4>Задача</h4><p>Получить оснащение, которое подходит под проект, бюджет, сроки и требования закупки.</p></div>
+            <div class="panel-card"><h4>Что делаем</h4><p>Подбираем мебельные решения, готовим расчёт, закрываем документы, помогаем передать объект в эксплуатацию.</p></div>
+            <div class="panel-card wide"><h4>Что получает клиент</h4><p>Понятный процесс и меньше рисков на этапе сдачи и запуска.</p></div>
+          </div>
+        </div>
+
+        <div class="audience-panel" id="panel-private">
+          <div class="panel-grid">
+            <h3 class="panel-title">Пространство для клиники, готовое к запуску</h3>
+            <div class="panel-card"><h4>Задача</h4><p>Открыть или обновить пространство без затяжных согласований и лишних подрядчиков.</p></div>
+            <div class="panel-card"><h4>Что делаем</h4><p>Подбираем мебель под планировку, задачи персонала, внешний вид помещения и сроки открытия.</p></div>
+            <div class="panel-card wide"><h4>Что получает клиент</h4><p>Аккуратное рабочее пространство, готовое к запуску. При необходимости делаем 3D-расстановку и индивидуальные решения.</p></div>
+          </div>
+        </div>
+
+        <div class="audience-panel" id="panel-tender">
+          <div class="panel-grid">
+            <h3 class="panel-title">Комплектация, с которой можно идти дальше по проекту</h3>
+            <div class="panel-card"><h4>Задача</h4><p>Быстро получить расчёт, состав комплектации и материалы для согласования.</p></div>
+            <div class="panel-card"><h4>Что делаем</h4><p>Разбираем проект, предлагаем решения, считаем поставку, помогаем сравнить варианты.</p></div>
+            <div class="panel-card wide"><h4>Что получает клиент</h4><p>Понятную комплектацию, а не просто таблицу с ценами.</p></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section page-shell" id="zones">
+      <div class="section-head reveal">
+        <div>
+          <span class="eyebrow">04 — ЗОНЫ</span>
+          <h2 class="section-title">Закрываем мебельную инфраструктуру объекта</h2>
+        </div>
+        <div class="section-head-actions"><p class="section-subtitle">Медицинский или социальный объект состоит из разных зон. Мы собираем их в единую комплектацию: от кабинетов и регистратуры до комнат персонала, хозяйственных помещений и пространств после капитального ремонта.</p><a class="btn secondary section-inline-cta" href="#request">Отправить планировку</a></div>
+      </div>
+
+      <div class="zones-grid-v2 reveal">
+        <article class="zone-media-card">
+          <div class="zone-media">
+            <img src="1.png" alt="Кабинет специалиста с рабочим столом, шкафами и кушеткой">
+          </div>
+          <div class="zone-copy">
+            <span class="zone-number">01</span>
+            <h3>Кабинеты специалистов</h3>
+            <p>Столы, шкафы, тумбы, стулья, кушетки, мебель для хранения.</p>
+          </div>
+        </article>
+
+        <article class="zone-media-card">
+          <div class="zone-media">
+            <img src="2.png" alt="Регистратура и зона ожидания медицинского объекта">
+          </div>
+          <div class="zone-copy">
+            <span class="zone-number">02</span>
+            <h3>Регистратуры и зоны ожидания</h3>
+            <p>Стойки, кресла, диваны, столики, навигационные и вспомогательные решения.</p>
+          </div>
+        </article>
+
+        <article class="zone-media-card">
+          <div class="zone-media">
+            <img src="3.png" alt="Административное помещение с рабочими местами и шкафами">
+          </div>
+          <div class="zone-copy">
+            <span class="zone-number">03</span>
+            <h3>Административные помещения</h3>
+            <p>Рабочие места, переговорные зоны, мебель для документов и хранения.</p>
+          </div>
+        </article>
+
+        <article class="zone-media-card">
+          <div class="zone-media">
+            <img src="4.png" alt="Комната персонала с зоной отдыха, шкафами и столом">
+          </div>
+          <div class="zone-copy">
+            <span class="zone-number">04</span>
+            <h3>Комнаты персонала</h3>
+            <p>Шкафы, столы, стулья, зоны отдыха, бытовая мебель.</p>
+          </div>
+        </article>
+
+        <article class="zone-media-card">
+          <div class="zone-media">
+            <img src="5.png" alt="Санаторное и реабилитационное пространство с мебелью для восстановления">
+          </div>
+          <div class="zone-copy">
+            <span class="zone-number">05</span>
+            <h3>Санаторные и реабилитационные пространства</h3>
+            <p>Мебель для проживания, отдыха, восстановления и ежедневного использования.</p>
+          </div>
+        </article>
+
+        <article class="zone-media-card">
+          <div class="zone-media">
+            <img src="6.png" alt="Хозяйственное помещение со шкафами, стеллажами и зонами хранения">
+          </div>
+          <div class="zone-copy">
+            <span class="zone-number">06</span>
+            <h3>Хозяйственные помещения</h3>
+            <p>Стеллажи, шкафы, тумбы, мебель для хранения и организации процессов.</p>
+          </div>
+        </article>
+
+        <article class="zone-media-card">
+          <div class="zone-media">
+            <img src="7.png" alt="Обновлённый медицинский объект после капитального ремонта">
+          </div>
+          <div class="zone-copy">
+            <span class="zone-number">07</span>
+            <h3>Объекты после капремонта</h3>
+            <p>Комплектация помещений под обновлённые планировки, сроки и требования сдачи.</p>
+          </div>
+        </article>
+
+        <div class="zones-callout-v2">
+          <strong>Типовое не подходит? Проектируем под помещение.</strong>
+          <p>Учитываем ниши, нестандартные размеры, особенности планировки и задачи эксплуатации.</p>
+          <a class="btn secondary" href="#request">Отправить планировку</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="section page-shell" id="process">
+      <div class="process-wrap process-wrap-cards">
+        <div class="process-sticky reveal">
+          <span class="eyebrow">05 — ПРОЦЕСС</span>
+          <h2>Ведём оснащение по этапам</h2>
+          <p>От первой заявки до монтажа и сопровождения после сдачи у проекта есть понятная последовательность действий и результат на каждом этапе.</p>
+          <a class="btn section-inline-cta" href="#request">Оставить заявку</a>
+        </div>
+
+        <div class="process-grid reveal">
+          <article class="process-card">
+            <img src="10.png" alt="Обсуждение проекта и планировки">
+            <div class="process-card-top"><span>01</span></div>
+            <div class="process-card-body">
+              <h3>Разбираем задачу</h3>
+              <p>Получаем проект, ведомость, техническое задание или описание объекта. Уточняем сроки, состав помещений, бюджет, регион, этапность и ограничения.</p>
+            </div>
+          </article>
+
+          <article class="process-card">
+            <img src="11.png" alt="Подбор материалов и решений для комплектации">
+            <div class="process-card-top"><span>02</span></div>
+            <div class="process-card-body">
+              <h3>Собираем комплектацию</h3>
+              <p>Подбираем мебельные решения под назначение помещений, проектные требования и будущую эксплуатацию. При необходимости предлагаем несколько вариантов по цене и характеристикам.</p>
+            </div>
+          </article>
+
+          <article class="process-card">
+            <img src="12.png" alt="3D-расстановка мебели на плане">
+            <div class="process-card-top"><span>03</span></div>
+            <div class="process-card-body">
+              <h3>Делаем 3D-расстановку</h3>
+              <p>Показываем, как мебель встанет в помещение. Это помогает заранее увидеть спорные места, проверить удобство и согласовать решение с заказчиком.</p>
+            </div>
+          </article>
+
+          <article class="process-card">
+            <img src="13.png" alt="Индивидуальное проектирование мебели">
+            <div class="process-card-top"><span>04</span></div>
+            <div class="process-card-body">
+              <h3>Проектируем индивидуальные решения</h3>
+              <p>Если помещение нестандартное или типовая мебель не подходит, проектируем мебель под конкретные размеры, ниши и задачи.</p>
+            </div>
+          </article>
+
+          <article class="process-card">
+            <img src="14.png" alt="Производство, упаковка и логистика мебели">
+            <div class="process-card-top"><span>05</span></div>
+            <div class="process-card-body">
+              <h3>Организуем производство и поставку</h3>
+              <p>Согласуем сроки, комплектацию и логистику. Работаем с объектами в разных регионах и учитываем реальные ограничения площадки.</p>
+            </div>
+          </article>
+
+          <article class="process-card">
+            <img src="15.png" alt="Монтаж мебели на объекте">
+            <div class="process-card-top"><span>06</span></div>
+            <div class="process-card-body">
+              <h3>Выполняем монтаж</h3>
+              <p>Доставляем, собираем и расставляем мебель на объекте. Проверяем, чтобы результат соответствовал согласованной комплектации и планировке.</p>
+            </div>
+          </article>
+
+          <article class="process-card">
+            <img src="16.png" alt="Подготовка и передача документов">
+            <div class="process-card-top"><span>07</span></div>
+            <div class="process-card-body">
+              <h3>Готовим документы</h3>
+              <p>Передаём документы по поставке и монтажу, чтобы заказчику было проще закрыть мебельную часть проекта.</p>
+            </div>
+          </article>
+
+          <article class="process-card">
+            <img src="17.png" alt="Сервисное сопровождение после сдачи">
+            <div class="process-card-top"><span>08</span></div>
+            <div class="process-card-body">
+              <h3>Остаёмся на связи</h3>
+              <p>После сдачи помогаем с вопросами эксплуатации, профилактическими выездами, регулировкой мебели и сервисным сопровождением.</p>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section page-shell" id="why">
+      <div class="section-head reveal">
+        <div>
+          <span class="eyebrow">06 — ПОЧЕМУ МЫ</span>
+          <h2 class="section-title">Опыт социальных объектов работает и здесь</h2>
+        </div>
+        <div class="section-head-actions"><p class="section-subtitle">Основной опыт компании — комплексное оснащение социальных и государственных объектов. В медицинской инфраструктуре похожая логика: сроки, документы, приёмка, монтаж, эксплуатация и ответственность перед людьми.</p><a class="btn secondary section-inline-cta" href="#request">Рассчитать оснащение</a></div>
+      </div>
+      <div class="why-grid reveal">
+        <article class="why-card"><div class="why-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h5l2-7 2 14 2-7h5"/><circle cx="12" cy="12" r="9"/></svg></div><h3>Понимаем сложные объекты</h3><p>Учитываем заказчика, подрядчика, проектировщиков, снабжение, монтажные бригады и будущую эксплуатацию.</p></article>
+        <article class="why-card"><div class="why-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 7v5l3 3"/><circle cx="12" cy="12" r="9"/></svg></div><h3>Управляем сроками</h3><p>Мебельное оснащение часто становится финальным этапом перед сдачей. Задержка может повлиять на запуск всего объекта.</p></article>
+        <article class="why-card"><div class="why-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12c2-3 5-4 8-4s6 1 8 4c-2 3-5 4-8 4s-6-1-8-4z"/><path d="M12 8v8"/><path d="M8.5 10.2 15.5 13.8"/></svg></div><h3>Гибко подстраиваемся</h3><p>Работаем с разными условиями финансирования, графиками поставки, форматами оплаты и нестандартными задачами.</p></article>
+        <article class="why-card"><div class="why-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 17 10 11l4 4 6-8"/><path d="M4 7h4v4"/><path d="M20 17h-4v-4"/></svg></div><h3>Делаем 3D-визуализацию</h3><p>Помогаем заранее понять, как будет выглядеть помещение и нет ли конфликтов с планировкой.</p></article>
+        <article class="why-card"><div class="why-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7-4.5-7-10a4 4 0 0 1 7-2.5A4 4 0 0 1 19 11c0 5.5-7 10-7 10z"/></svg></div><h3>Остаёмся рядом</h3><p>После открытия помогаем разобраться с оснащением, проводим профилактические работы и предлагаем сервисное сопровождение.</p></article>
+        <article class="why-card"><div class="why-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4h10v16H7z"/><path d="M9.5 8h5"/><path d="M9.5 12h5"/><path d="M9.5 16h3"/></svg></div><h3>Работаем с документами</h3><p>Для государственных, муниципальных и строительных объектов важна не только поставка, но и закрывающие документы.</p></article>
+      </div>
+    </section>
+
+    <section class="section page-shell" id="proof">
+      <div class="proof-section real-cases reveal">
+        <div class="section-head">
+          <div>
+            <span class="eyebrow">07 — ОПЫТ</span>
+            <h2 class="section-title">Реальные проекты, близкие по логике к медицинским объектам</h2>
+          </div>
+          <div class="section-head-actions"><p class="section-subtitle">Для этой страницы важны не абстрактные обещания, а проекты с похожей механикой: много помещений, разные зоны, сроки, документы, монтаж и ежедневная эксплуатация мебели.</p><a class="btn secondary section-inline-cta" href="#request">Обсудить похожий проект</a></div>
+        </div>
+
+        <div class="real-cases-grid">
+          <article class="real-case-card">
+            <div class="real-case-image">
+              <img src="3.png" alt="Кейс СоюзПоставки — кампус ЧелГУ">
+            </div>
+            <div class="real-case-body">
+              <small>кейс 01 · образовательный объект</small>
+              <h3>Кампус ЧелГУ</h3>
+              <p>Крупный объект с большим количеством помещений и пользователей. Такой кейс показывает опыт комплексной комплектации, работы с разными зонами и ответственными сроками.</p>
+              <a class="real-case-link" href="https://pro-sp.ru/kamus-chelgu-budushhee-regiona/" target="_blank" rel="noopener">Смотреть проект</a>
+            </div>
+          </article>
+
+          <article class="real-case-card">
+            <div class="real-case-image">
+              <img src="2.png" alt="Кейс СоюзПоставки — лицей Созвездие">
+            </div>
+            <div class="real-case-body">
+              <small>кейс 02 · социальная инфраструктура</small>
+              <h3>Лицей «Созвездие»</h3>
+              <p>Объект для ежедневной высокой нагрузки: учебные, общественные и административные пространства. По механике это близко к медицинским и социальным объектам.</p>
+              <a class="real-case-link" href="https://pro-sp.ru/directions/liczej-sozvezdie/" target="_blank" rel="noopener">Смотреть проект</a>
+            </div>
+          </article>
+
+          <article class="real-case-card">
+            <div class="real-case-image">
+              <img src="5.png" alt="Кейс СоюзПоставки — гостиница Сакура">
+            </div>
+            <div class="real-case-body">
+              <small>кейс 03 · общественное пространство</small>
+              <h3>Гостиница «Сакура»</h3>
+              <p>Проект с разными сценариями использования: проживание, отдых, хранение, административные зоны. Такой опыт полезен для санаториев, реабилитационных и социальных объектов.</p>
+              <a class="real-case-link" href="https://pro-sp.ru/directions/gostinicza-sakura/" target="_blank" rel="noopener">Смотреть проект</a>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    
+    <section class="section page-shell" id="team">
+      <div class="expert-section reveal">
+        <div class="expert-head">
+          <span class="eyebrow">08 — КОМАНДА</span>
+          <h2>Есть вопросы по мебельному оснащению медицинского объекта?</h2>
+          <p>Подключим специалиста, который разберёт планировку, состав помещений и подскажет, как собрать мебельную часть проекта без лишних поставщиков и ручной координации.</p>
+        </div>
+
+        <div class="expert-grid">
+          <div class="expert-photo">
+            <img src="10.png" alt="Команда обсуждает проект мебельного оснащения">
+          </div>
+
+          <div class="expert-card">
+            <h3>Поможем собрать комплектацию под объект</h3>
+            <p>Можно прислать планировку, ведомость, техническое задание или описание объекта. Мы посмотрим состав зон, сроки, регион и ограничения площадки, а затем предложим понятный следующий шаг.</p>
+
+            <div class="expert-points">
+              <div class="expert-point">
+                <span>01</span>
+                <div>
+                  <strong>Предварительный разбор проекта</strong>
+                  <p>Оценим, какие зоны нужно закрыть и где могут появиться спорные места по комплектации.</p>
+                </div>
+              </div>
+              <div class="expert-point">
+                <span>02</span>
+                <div>
+                  <strong>Расчёт и варианты решений</strong>
+                  <p>Подготовим основу для расчёта и при необходимости предложим несколько вариантов по составу и бюджету.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="expert-bottom">
+            <div>
+              <strong>Нужна предварительная оценка?</strong>
+              <p>Пришлите вводные — вернёмся с вопросами по объекту и подготовим первый вариант комплектации.</p>
+            </div>
+            <a class="btn expert-btn" href="#request">Обсудить проект →</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section page-shell" id="faq">
+      <div class="faq-section reveal">
+        <div class="section-head">
+          <div>
+            <span class="eyebrow">09 — FAQ</span>
+            <h2 class="section-title">Частые вопросы перед расчётом</h2>
+          </div>
+          <div class="section-head-actions">
+            <p class="section-subtitle">Собрали вопросы, которые обычно возникают перед заказом мебельного оснащения: от состава работ и 3D-расстановки до сроков, документов и монтажа.</p>
+            <a class="btn secondary section-inline-cta" href="#request">Задать вопрос</a>
+          </div>
+        </div>
+
+        <div class="faq-list">
+          <details class="faq-item" open>
+            <summary>Можно ли заказать не отдельную мебель, а комплектацию всего объекта?</summary>
+            <p>Да. Можно передать планировку, ведомость или описание помещений, а мы соберём мебельную часть проекта по зонам: кабинеты, ожидание, административные помещения, комнаты персонала, хозяйственные и вспомогательные пространства.</p>
+          </details>
+          <details class="faq-item">
+            <summary>Делаете ли вы 3D-расстановку мебели?</summary>
+            <p>Да, при необходимости показываем расстановку мебели в помещениях. Это помогает заранее проверить удобство, проходы, спорные места и согласовать решение до поставки.</p>
+          </details>
+          <details class="faq-item">
+            <summary>Можно ли изготовить мебель под нестандартные размеры?</summary>
+            <p>Да. Если типовое решение не подходит под нишу, планировку или задачу эксплуатации, можно спроектировать индивидуальные мебельные решения под конкретное помещение.</p>
+          </details>
+          <details class="faq-item">
+            <summary>Работаете ли вы с объектами в регионах?</summary>
+            <p>Да. В расчёте учитываем регион, логистику, этапность поставки и ограничения площадки, чтобы мебельное оснащение было синхронизировано со сроками проекта.</p>
+          </details>
+          <details class="faq-item">
+            <summary>Что нужно отправить для предварительного расчёта?</summary>
+            <p>Подойдёт проект помещения, планировка, ведомость мебели, техническое задание, список помещений или свободное описание объекта: что нужно оснастить, где находится объект и какие есть сроки.</p>
+          </details>
+          <details class="faq-item">
+            <summary>Вы занимаетесь монтажом и документами?</summary>
+            <p>Да. В проект можно включить поставку, сборку, расстановку мебели и передачу закрывающих документов по мебельной части.</p>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <section class="section page-shell" id="request">
+      <div class="cta-box reveal">
+        <div class="cta-copy">
+          <span class="eyebrow">08 — РАСЧЁТ</span>
+          <h2>Пришлите проект, ведомость или описание объекта</h2>
+          <p>Разберём состав помещений, предложим мебельные решения, оценим сроки и покажем, как можно закрыть мебельную часть объекта одним подрядчиком.</p>
+        </div>
+        <form class="form-card" action="#" method="post">
+          <div class="field"><input id="name" name="name" type="text" placeholder="Имя"></div>
+          <div class="field"><input id="contact" name="contact" type="text" placeholder="Телефон или почта"></div>
+          <div class="field"><textarea id="comment" name="comment" placeholder="Комментарий: тип объекта, регион, сроки"></textarea></div>
+          <button class="btn" type="submit">Получить расчёт</button>
+          <p class="form-note">Если проект ещё не готов, опишите задачу в свободной форме — подскажем, с чего начать.</p>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const tabs = document.querySelectorAll('.audience-tab');
+    const panels = document.querySelectorAll('.audience-panel');
+
+    tabs.forEach((tab) => {
+      tab.addEventListener('click', () => {
+        tabs.forEach((item) => item.classList.remove('active'));
+        panels.forEach((panel) => panel.classList.remove('active'));
+        tab.classList.add('active');
+        document.getElementById(tab.dataset.target).classList.add('active');
+      });
+    });
+
+    const revealObserver = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          revealObserver.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.13 });
+
+    document.querySelectorAll('.reveal').forEach((item) => revealObserver.observe(item));
+
+    window.addEventListener('pointermove', (event) => {
+      document.body.style.setProperty('--mx', `${event.clientX}px`);
+      document.body.style.setProperty('--my', `${event.clientY}px`);
+    }, { passive: true });
+
+    document.querySelectorAll('a[href^="#"]').forEach((link) => {
+      link.addEventListener('click', (event) => {
+        const target = document.querySelector(link.getAttribute('href'));
+        if (!target) return;
+        event.preventDefault();
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+    });
+
+    const heroSlides = document.querySelectorAll('.hero-slide');
+    let heroSlideIndex = 0;
+
+    if (heroSlides.length > 1) {
+      setInterval(() => {
+        heroSlides[heroSlideIndex].classList.remove('active');
+        heroSlideIndex = (heroSlideIndex + 1) % heroSlides.length;
+        heroSlides[heroSlideIndex].classList.add('active');
+      }, 3000);
+    }
+
+  </script>
+</body>
+</html>
